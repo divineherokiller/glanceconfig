@@ -104,7 +104,7 @@ pages:
   #       widgets:
   #         # Add widgets here
 
-
+pages:
   - name: Home 2
     columns:
       - size: small  # Left column
