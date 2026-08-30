@@ -1,0 +1,634 @@
+pages:
+  - name: Home
+    # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
+    # hide-desktop-navigation: true
+    columns:
+      - size: small
+        widgets:
+          - type: calendar
+            first-day-of-week: monday
+
+          - type: rss
+            limit: 10
+            collapse-after: 3
+            cache: 12h
+            feeds:
+              - url: https://selfh.st/rss/
+                title: selfh.st
+                limit: 4
+              - url: https://ciechanow.ski/atom.xml
+              - url: https://www.joshwcomeau.com/rss.xml
+                title: Josh Comeau
+              - url: https://samwho.dev/rss.xml
+              - url: https://ishadeed.com/feed.xml
+                title: Ahmad Shadeed
+
+          - type: twitch-channels
+            channels:
+              - theprimeagen
+              - j_blow
+              - giantwaffle
+              - cohhcarnage
+              - christitustech
+              - EJ_SA
+
+      - size: full
+        widgets:
+          - type: group
+            widgets:
+              - type: hacker-news
+              - type: lobsters
+
+          - type: videos
+            channels:
+              - UCXuqSBlHAE6Xw-yeJA0Tunw # Linus Tech Tips
+              - UCR-DXc1voovS8nhAvccRZhg # Jeff Geerling
+              - UCsBjURrPoezykLs9EqgamOA # Fireship
+              - UCBJycsmduvYEL83R_U4JriQ # Marques Brownlee
+              - UCHnyfMqiRRG1u-2MsSQLbXA # Veritasium
+
+          - type: group
+            widgets:
+              - type: reddit
+                subreddit: technology
+                show-thumbnails: true
+              - type: reddit
+                subreddit: selfhosted
+                show-thumbnails: true
+
+      - size: small
+        widgets:
+          - type: weather
+            location: London, United Kingdom
+            units: metric # alternatively "imperial"
+            hour-format: 12h # alternatively "24h"
+            # Optionally hide the location from being displayed in the widget
+            # hide-location: true
+
+          - type: markets
+            markets:
+              - symbol: SPY
+                name: S&P 500
+              - symbol: BTC-USD
+                name: Bitcoin
+              - symbol: NVDA
+                name: NVIDIA
+              - symbol: AAPL
+                name: Apple
+              - symbol: MSFT
+                name: Microsoft
+
+          - type: releases
+            cache: 1d
+            # Without authentication the Github API allows for up to 60 requests per hour. You can create a
+            # read-only token from your Github account settings and use it here to increase the limit.
+            # token: ...
+            repositories:
+              - glanceapp/glance
+              - go-gitea/gitea
+              - immich-app/immich
+              - syncthing/syncthing
+
+  # Add more pages here:
+  # - name: Your page name
+  #   columns:
+  #     - size: small
+  #       widgets:
+  #         # Add widgets here
+
+  #     - size: full
+  #       widgets:
+  #         # Add widgets here
+
+  #     - size: small
+  #       widgets:
+  #         # Add widgets here
+
+
+  - name: Home 2
+    columns:
+      - size: small  # Left column
+        widgets:
+          - type: to-do
+
+          - type: calendar
+
+          - type: markets
+            markets:
+              - symbol: SPY
+                name: S&P 500
+              - symbol: BTC-USD
+                name: Bitcoin
+              - symbol: NVDA
+                name: NVIDIA
+              - symbol: AAPL
+                name: Apple
+              - symbol: MSFT
+                name: Microsoft
+
+          - type: custom-api
+            title: Astronomy Picture of the Day
+            cache: 1d
+            url: https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY  # Replace with your NASA API key
+            headers:
+              Accept: application/json
+            template: |
+              {{- if eq (.JSON.String "media_type") "image" -}}
+                <div style="display:flex; flex-direction:column; align-items:center; width:100%; padding:8px; box-sizing:border-box;">
+                  <!-- Clickable title -->
+                  <p class="color-primary" style="margin:0 0 8px; text-align:center;">
+                    <a 
+                      href="https://apod.nasa.gov/apod/astropix.html" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style="color: inherit; text-decoration: none;"
+                    >
+                      {{ .JSON.String "title" }}
+                    </a>
+                  </p>
+
+                  <!-- Image -->
+                  <img
+                    src="{{ .JSON.String "url" }}"
+                    alt="{{ .JSON.String "title" }}"
+                    style="max-width:100%; height:auto; display:block; border-radius:4px;"
+                  />
+
+                  <!-- Explanation dropdown -->
+                  <details style="width:100%; margin-top:12px;">
+                    <summary class="color-highlight size-h5" style="cursor:pointer;">
+                      Show Explanation
+                    </summary>
+                    <p class="color-highlight size-h5" style="margin-top:8px; text-align:left; line-height:1.4;">
+                      {{ .JSON.String "explanation" }}
+                    </p>
+                  </details>
+                </div>
+              {{- else -}}
+                <p class="color-negative" style="text-align:center;">
+                  No image available today.
+                </p>
+              {{- end }}
+
+          - type: custom-api
+            height: 200px
+            title: Random Dog
+            cache: 2m
+            url: https://dog.ceo/api/breeds/image/random
+            template: |
+              <img src="{{ .JSON.String "message" }}"></img>
+
+      - size: full  # Center column
+        widgets:
+          - type: server-stats
+            servers:
+              - type: local
+                name: My Server  # Replace with your server name
+            cache: 5s
+            disks:
+              - /
+            cpu: true
+            memory: true
+            load: true
+
+          - type: monitor
+            title: Services
+            cache: 1m
+            sites:
+              - title: Jellyfin
+                url: http://YOUR_SERVER_IP:8096  # Replace with your server IP/domain
+                check-url: http://jellyfin:8096
+                icon: di:jellyfin
+              - title: Ombi
+                url: http://YOUR_SERVER_IP:3579
+                check-url: http://ombi:3579
+                icon: di:ombi                
+              - title: Radarr
+                url: http://YOUR_SERVER_IP:7878
+                check-url: http://radarr:7878
+                icon: di:radarr
+              - title: Sonarr
+                url: http://YOUR_SERVER_IP:8989
+                check-url: http://sonarr:8989
+                icon: di:sonarr
+              - title: Bazarr
+                url: http://YOUR_SERVER_IP:6767
+                check-url: http://bazarr:6767
+                icon: di:bazarr
+              - title: Prowlarr
+                url: http://YOUR_SERVER_IP:9696
+                check-url: http://prowlarr:9696
+                icon: di:prowlarr
+              - title: qBittorrent
+                url: http://YOUR_SERVER_IP:8080
+                check-url: http://qbittorrent:8080
+                icon: di:qbittorrent
+              - title: Immich
+                url: http://YOUR_SERVER_IP:2283
+                check-url: http://immich_server:2283
+                icon: di:immich
+
+          - type: rss
+            limit: 10
+            collapse-after: 5
+            cache: 12h
+            feeds:
+              - url: https://servis.idnes.cz/rss.aspx?c=zpravodaj
+                title: iDNES.cz
+              - url: https://www.czechcrunch.cz/feed/
+                title: CzechCrunch
+
+          - type: videos
+            channels: 
+              - UCSgFxc7dM_mjQIC0zxn1zqw # Petr Mára
+              - UCIFk2uvCNcEmZ77g0ESKLcQ # Whyfiles
+              - UC9x0AN7BWHpCDHSm9NiJFJQ # NetworkChuck
+              - UCz-nAvdmv4F3vJFDBnVvPLw # Brocast
+
+          - type: group
+            widgets:
+              - type: reddit
+                subreddit: selfhosted
+                show-thumbnails: true
+              - type: reddit
+                subreddit: Czech
+                show-thumbnails: true
+
+      - size: small  # Right column
+        widgets:
+          - type: custom-api
+            title: Internet Speed
+            title-url: "http://YOUR_SERVER_IP:8765/"  # Replace with your Speedtest Tracker URL
+            url: "http://speedtest-tracker:80/api/speedtest/latest"
+            headers:
+              Authorization: "Bearer YOUR_SPEEDTEST_TOKEN"  # Replace with your auth token
+              Accept: application/json
+            options:
+              showPercentageDiff: false
+            template: |
+              <div class="flex justify-between text-center margin-block-3">
+                <!-- download -->
+                <div>
+                  <div class="color-highlight size-h3">{{ .JSON.Float "data.download" | printf "%.1f Mbps" }}</div>
+                  <div class="size-h6">DOWNLOAD</div>
+                </div>
+                <!-- upload -->
+                <div>
+                  <div class="color-highlight size-h3">{{ .JSON.Float "data.upload" | printf "%.1f Mbps" }}</div>
+                  <div class="size-h6">UPLOAD</div>
+                </div>
+                <!-- ping -->
+                <div>
+                  <div class="color-highlight size-h3">{{ .JSON.Float "data.ping" | printf "%.1f ms" }}</div>
+                  <div class="size-h6">PING</div>
+                </div>
+              </div>
+
+          - type: custom-api
+            title: Weather Forecast
+            body-type: string
+            cache: 1h
+            options:
+              location: Prague, Czechia 
+              weekend_color: "#34363D"
+              color_clear: "#FFA500"
+              color_partly: "#EBE387"
+              color_cloud: "#A9A9A9"
+              color_smog: "#D3D3D3"
+              color_drizzle: "#5F9EA0"
+              color_rain: "#4682B4"
+              color_freezing_rain: "#B0E0E6"
+              color_snow: "#FFFFFF"
+              color_thunderstorm: "#696969"
+              color_other: "#FFFFFF"
+              color_red: "#F08C46"
+              color_yellow: "#F0F046"
+              color_blue: "#46F0F0"
+              color_white: "#FFFFFF"
+            template: | 
+              {{/* Weather widget – fully customizable via options */}}
+              {{ $temp_unit := .Options.StringOr "temp_unit" "celsius" }}
+              {{ $weekend_color := .Options.StringOr "weekend_color" "var(--color-separator)" }}
+              {{ $overlay_color := .Options.StringOr "overlay_color" "hsl(var(--bghs), var(--bgl), 50%)" }}
+              {{ $color_clear := .Options.StringOr "color_clear" "var(--color-text-highlight)" }}
+              {{ $color_partly := .Options.StringOr "color_partly" "var(--color-text-highlight)"}}
+              {{ $color_cloud := .Options.StringOr "color_cloud" "var(--color-text-highlight)"}}
+              {{ $color_smog := .Options.StringOr "color_smog" "var(--color-text-highlight)"}}
+              {{ $color_drizzle := .Options.StringOr "color_drizzle" "var(--color-text-highlight)"}}
+              {{ $color_rain := .Options.StringOr "color_rain" "var(--color-text-highlight)"}}
+              {{ $color_freezing_rain := .Options.StringOr "color_freezing_rain" "var(--color-text-highlight)"}}
+              {{ $color_snow := .Options.StringOr "color_snow" "var(--color-text-highlight)F"}}
+              {{ $color_thunderstorm := .Options.StringOr "color_thunderstorm" "var(--color-text-highlight)"}}
+              {{ $color_other := .Options.StringOr "color_other" "var(--color-text-highlight)"}}
+              {{ $color_red := .Options.StringOr "color_red" "var(--color-negative)" }}  
+              {{ $color_yellow := .Options.StringOr "color_yellow" "var(--color-text-subdue)" }}
+              {{ $color_blue := .Options.StringOr "color_blue" "var(--color-positive)" }}
+              {{ $color_white := .Options.StringOr "color_white" "var(--color-text-highlight)" }}
+              {{ $temp_red := .Options.FloatOr "temp_red" 27 }}
+              {{ $temp_yellow := .Options.FloatOr "temp_yellow" 20 }}
+              {{ $temp_blue := .Options.FloatOr "temp_blue" 10.0 }}
+              {{ $temp_white := .Options.FloatOr "temp_white" 0 }}
+              {{ if eq $temp_unit "fahrenheit" }}
+                {{ $temp_red = .Options.FloatOr "temp_red" 80.0 }}
+                {{ $temp_yellow = .Options.FloatOr "temp_yellow" 70.0 }}
+                {{ $temp_blue = .Options.FloatOr "temp_blue" 50.0 }}
+                {{ $temp_white = .Options.FloatOr "temp_white" 30.0 }}
+              {{end}}
+
+              {{ $location_string := replaceAll " " "%20" (.Options.StringOr "location" "") }}
+              {{ $url1 := printf "https://geocoding-api.open-meteo.com/v1/search?name=%s&count=20&language=en&format=json" $location_string }}
+              {{ $req1 := newRequest $url1 | getResponse }}
+              {{ $latitude := $req1.JSON.String "results.0.latitude" }}
+              {{ $longitude := $req1.JSON.String "results.0.longitude" }}
+
+              {{ $url2 := printf "https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s&temperature_unit=%s&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=Europe/Prague" $latitude $longitude $temp_unit}}    
+              {{ $req2 := newRequest $url2 | getResponse }}
+
+              <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+                {{ $dates := $req2.JSON.Array "daily.time" }}
+                <div style="position: relative; width: 100%; height: 25px;">  
+                  {{ range $index, $date := $dates }}
+                    {{ $dateString := .String "" }}
+                    {{ $parsedDate := $dateString | parseTime "DateOnly" }}
+                    {{ $dayOfWeek := $parsedDate.Format "Monday" | trimSuffix "day" | trimSuffix "on" | trimSuffix "es" | trimSuffix "edn" | trimSuffix "urs" | trimSuffix "ri" | trimSuffix "tur" | trimSuffix "n" }}  
+                    {{ $day_color := "" }}
+                    {{ if eq $dayOfWeek "Sa" "Su" }}
+                      {{ $day_color = $weekend_color }}
+                    {{ end }}
+                    <div style="text-align: center; width: 10%; height: 25px; line-height: 25px; margin: 0 10% 0 3%; left: {{ mul $index 14 }}%; position: absolute; background-color: {{ $day_color | safeCSS }} ">
+                      <p class="size-h4 color-paragraph">{{ $dayOfWeek }}</p> 
+                    </div>
+                  {{ end }}
+                </div>
+
+                <div style="position: relative; width: 100%; height: 25px;">     
+                  {{ range $index, $date := $dates }}
+                    {{ $dateString := .String "" }}
+                    {{ $trimmedDate := replaceMatches "[0-9]+-[0-9]+-" "" $dateString }}
+                    <div style="text-align: center; width: 10%; height: 25px; line-height: 25px; margin: 0 10% 0 3%; left: {{ mul $index 14 }}%; position: absolute;">
+                      <p class="size-h4 color-paragraph">{{ $trimmedDate }}</p> 
+                    </div>
+                  {{ end }}
+                </div>
+
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                {{ $codes := $req2.JSON.Array "daily.weathercode" }}
+                <div style="position: relative; width: 100%; height: 30px;">     
+                  {{ range $index, $thiscode := $codes }}
+                    {{ $code := .Int "" }}
+                    <div style="text-align: center; width: 10%; height: 25px; line-height: 25px; margin: 0 10% 0 3%; left: {{ mul $index 14 }}% ; position: absolute;">
+                    {{ $wtype := "" }} 
+                    {{ $wicon := "" }} 
+                    {{ $wcolor := "" }} 
+                    {{ if eq $code 0 }}
+                      {{ $wtype = "Clear" }}
+                      {{ $wicon = "fas fa-sun" }}
+                      {{ $wcolor = $color_clear }}
+                    {{ else if or (eq $code 1) (eq $code 2) }}
+                      {{ $wtype = "Part Clear" }}
+                      {{ $wicon = "fas fa-cloud-sun" }}
+                      {{ $wcolor = $color_partly }} 
+                    {{ else if eq $code 3 }}
+                      {{ $wtype = "Cloudy" }}
+                      {{ $wicon = "fas fa-cloud" }}
+                      {{ $wcolor = $color_cloud }}
+                    {{ else if or (eq $code 45) (eq $code 48) }}
+                      {{ $wtype = "Fog" }}
+                      {{ $wicon = "fas fa-smog" }}
+                      {{ $wcolor = $color_smog }}
+                    {{ else if has $code [51 53 55 56 57] }}
+                      {{ $wtype = "Drizzle" }}
+                      {{ $wicon = "fas fa-cloud-rain" }}
+                      {{ $wcolor = $color_drizzle }}
+                    {{ else if has $code [61 63 65 80 81 82] }}
+                      {{ $wtype = "Rain" }}
+                      {{ $wicon = "fas fa-cloud-showers-heavy" }}
+                      {{ $wcolor = $color_rain }}
+                    {{ else if or (eq $code 66) (eq $code 67) }}
+                      {{ $wtype = "Freezing Rain" }}
+                      {{ $wicon = "fas fa-snowflake" }}
+                      {{ $wcolor = $color_freezing_rain }}
+                    {{ else if has $code [71 73 75 77 85 86] }}
+                      {{ $wtype = "Snow" }}
+                      {{ $wicon = "fas fa-snowman" }}
+                      {{ $wcolor = $color_snow }}
+                    {{ else if has $code [95 96 99] }}
+                      {{ $wtype = "Thunderstorm" }}
+                      {{ $wicon = "fas fa-bolt" }}
+                      {{ $wcolor = $color_thunderstorm }}
+                    {{ else }}
+                      {{ $wtype = "Other" }}
+                      {{ $wicon = "fa-solid fa-question" }}
+                      {{ $wcolor = $color_other }}
+                    {{ end }}
+                    <i class={{ $wicon }} style="font-size: 20px; color: {{ $wcolor | safeCSS }};" title={{ $wtype }}></i>
+                    </div>
+                  {{ end }}
+                </div>
+              </div>
+
+              {{ $maxTemps := $req2.JSON.Array "daily.temperature_2m_max" }}
+              {{ $minTemps := $req2.JSON.Array "daily.temperature_2m_min" }} 
+
+              <div style="display: flex; justify-content: flex-start; align-items: center;">
+                {{ $max_max := 0 }}
+                {{ range $maxTemps }}
+                    {{ if gt (.Int "") $max_max }}
+                      {{ $max_max = (.Int "") }}
+                    {{ end }}
+                {{ end }}
+                {{ $min_min := 999 }}
+                {{ range $minTemps }}
+                    {{ if lt (.Int "") $min_min }}
+                      {{ $min_min = (.Int "") }}
+                    {{ end }}
+                {{ end }}
+                {{ $max_max = add $max_max 1 }}
+                {{ $min_min = sub $min_min 1 }}
+
+                <div style="position: relative; width: 100%; height: 75px;">
+                  {{ $temp_range := sub $max_max $min_min }}
+                  {{ range $index, $thisHigh := $maxTemps }}
+                      {{ $thisLow := index $minTemps $index }}
+                      {{ $thisHigh = $thisHigh.Float "" }}
+                      {{ $thisLow = $thisLow.Float "" }}
+                      {{ $thisHighPct := sub 1 (div (sub $max_max $thisHigh) $temp_range) }}
+                      {{ $thisLowPct := div (sub $thisLow $min_min) $temp_range }}
+                      {{ $thisTempRange := sub $thisHigh $thisLow }}
+                      {{ $red_pos := mul 100 (div (sub $thisHigh $temp_red) $thisTempRange) | toInt }}
+                      {{ $yel_pos := mul 100 (div (sub $thisHigh $temp_yellow) $thisTempRange) | toInt }}
+                      {{ $blu_pos := mul 100 (div (sub $thisHigh $temp_blue) $thisTempRange) | toInt }}
+                      {{ $whi_pos := mul 100 (div (sub $thisHigh $temp_white) $thisTempRange) | toInt }}
+                      {{ $gradient_string := printf "%s %d%%, %s %d%%, %s %d%%, %s %d%%" $color_red $red_pos $color_yellow $yel_pos $color_blue $blu_pos $color_white $whi_pos }}
+
+                      <div style="left: {{ mul $index 14 | add 3 }}%; bottom: {{ mul $thisLowPct 100 | toInt }}%; 
+                        height: {{ mul (sub $thisHighPct $thisLowPct) 100 | toInt }}%; position: absolute;
+                        background:linear-gradient({{ $gradient_string | safeCSS }}); width: 10%; text-align: center; border-radius: 10px;">
+                        {{ $top_pos := -2 }}
+                        {{ $bot_pos := -2 }}
+                        {{ $pos_thresh := 0.20 }}
+                        {{ if lt (div $thisTempRange $temp_range) $pos_thresh }} 
+                          {{ $top_pos = -17 }}
+                          {{ $bot_pos = -19 }}
+                        {{ else if and (lt (div $thisTempRange $temp_range) (mul $pos_thresh 2)) (lt (sub 1 $thisHighPct) $thisLowPct) }}
+                          {{ $bot_pos = -19 }}
+                        {{ else if and (lt (div $thisTempRange $temp_range) (mul $pos_thresh 2)) (gt (sub 1 $thisHighPct) $thisLowPct) }}
+                          {{ $top_pos = -17 }}
+                        {{ end }}
+                          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: {{ $overlay_color | safeCSS }}; z-index: 1;  border-radius: 10px;">
+                            <p style='color: #F0F0F0; position: absolute; top: {{ $top_pos }}px; left: 0px; right: 0px'>{{ $thisHigh | toInt }}</p>
+                            <p style='color: #F0F0F0; position: absolute; bottom: {{ $bot_pos }}px; left: 0px; right:0px'>{{ $thisLow | toInt }}</p>
+                          </div>
+                        </div>
+                  {{ end }}
+                </div>
+              </div>    
+
+          - type: custom-api
+            title: Nearby Aircraft
+            cache: 1m
+            url: https://opensky-network.org/api/states/all?lamin=50.0&lomin=14.3&lamax=50.2&lomax=14.6  # Prague area
+            template: |
+              <div class="opensky-aircraft-stats">
+                {{ $states := .JSON.Array "states" }}
+                {{ $statesCount := len $states }}
+                <div class="margin-block-2">
+                  <div class="size-h6">AIRCRAFT NEARBY: {{ $statesCount }}</div>
+                </div>
+                {{ if gt $statesCount 0 }}
+                  {{ range $index, $plane := $states }}
+                    {{ $callsign := $plane.String "1" }}
+                    {{ $icao24 := $plane.String "0" }}
+                    {{ $origin := $plane.String "2" }}
+                    {{ $onGround := $plane.Bool "8" }}
+                    {{ $airlineName := "" }}
+                    {{ $airlineIata := "" }}
+                    {{ $logoUrl := "" }}
+                    {{ if and (ne $callsign "") (ge (len $callsign) 3) }}
+                      {{ $prefix := (slice $callsign 0 3) }}
+                      {{/* Add more airlines as needed – see full list in original config */}}
+                    {{ end }}
+                    <div class="aircraft-item margin-block-2" style="border-top: {{ if eq $index 0 }}none{{ else }}1px solid #ccc{{ end }}; padding-top: {{ if eq $index 0 }}0{{ else }}10px{{ end }};">
+                      {{ if ne $airlineName "" }}
+                        <div class="margin-block-1">
+                          {{ if ne $logoUrl "" }}
+                            <img src="{{ $logoUrl }}" alt="{{ $airlineName }} Logo" style="width: 80px; height: 40px; object-fit: contain;">
+                          {{ end }}
+                          <div class="size-h5 color-highlight">{{ $airlineName }}</div>
+                        </div>
+                      {{ else }}
+                        <div class="margin-block-1">
+                          <div class="size-h5 color-highlight">{{ if ne $origin "" }}{{ $origin }} (Unknown Airline){{ else }}Unknown Airline{{ end }}</div>
+                        </div>
+                      {{ end }}
+                      <div class="margin-block-2">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                          <div>
+                            <div class="color-highlight size-h3">{{ if ne $callsign "" }}{{ $callsign }}{{ else }}{{ $icao24 }}{{ end }}</div>
+                            <div class="size-h6">CALLSIGN</div>
+                          </div>
+                          <div>
+                            <div class="color-highlight size-h3 text-truncate" style="max-width: 100%;">{{ if ne $origin "" }}{{ $origin }}{{ else }}-{{ end }}</div>
+                            <div class="size-h6">ORIGIN</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="margin-block-2">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                          <div>
+                            {{ $altitude := $plane.Float "7" }}
+                            <div class="color-highlight size-h3">{{ if and (not $onGround) ($altitude | ne 0.0) }}{{ $altitude | printf "%.0f" }}m{{ else }}-{{ end }}</div>
+                            <div class="size-h6">ALTITUDE</div>
+                          </div>
+                          <div>
+                            {{ $speed := $plane.Float "9" }}
+                            <div class="color-highlight size-h3">{{ if and (not $onGround) ($speed | ne 0.0) }}{{ $speed | printf "%.0f" }}m/s{{ else }}-{{ end }}</div>
+                            <div class="size-h6">SPEED</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {{ end }}
+                {{ end }}
+              </div>
+
+          - type: custom-api
+            title: Next Race
+            cache: 5m
+            url: http://YOUR_SERVER_IP:4463/f1/next_race/  # Replace with your F1 API endpoint
+            template: |
+              <div class="flex flex-column gap-10">
+                {{ $session := index (.JSON.Array "race") 0 }}
+                <p class="size-h5">
+                  {{ .JSON.String "season" }}, Round {{ .JSON.String "round" }}
+                </p>
+                <div class="margin-block-4">
+                  <p class="color-highlight">{{ $session.String "raceName" }}</p>
+                  <p class="color-primary">
+                    <span>{{ .JSON.String "next_event.session" }}</span>
+                    <span class="color-highlight" {{ parseRelativeTime "rfc3339" (.JSON.String "next_event.datetime") }}></span>
+                  </p>
+                  <p class="size-h5">
+                    {{ .JSON.String "next_event.date" }} @ {{ .JSON.String "next_event.time" }}
+                  </p>
+                  <div style="margin-block: 1rem;">
+                    <img
+                      src="http://YOUR_SERVER_IP:4463/f1/next_map/"  # Replace with your map endpoint
+                      onerror="this.style.display='none'"
+                      style="max-width: 100%; height: auto; border-radius: 8px;"
+                    />
+                  </div>
+                  <p class="color-highlight">Circuit Details</p>
+                  <p class="size-h6">Name: {{ $session.String "circuit.circuitName" }}</p>
+                  <p class="size-h6">Lap Record: {{ $session.String "circuit.lapRecord" }}, {{ $session.String "circuit.fastestLapDriverName" }} ({{ $session.String "circuit.fastestLapYear"}})</p>
+                  <p class="size-h6">Length: {{ $session.String "laps" }} laps @ {{ $session.String "circuit.circuitLengthKm" }} KMs</p>
+                </div>
+              </div>
+
+          - type: custom-api
+            title: Epic Games - Free
+            cache: 1h
+            url: https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en&country=US&allowCountries=US
+            template: |
+              <div>
+                {{ if eq .Response.StatusCode 200 }}
+                  <div class="horizontal-cards-2">
+                    {{ range .JSON.Array "data.Catalog.searchStore.elements" }}
+                      {{ $price := .String "price.totalPrice.discountPrice" }}
+                      {{ $hasPromo := gt (len (.Array "promotions.promotionalOffers")) 0 }}
+                      {{ if and $hasPromo (eq $price "0") }}
+                        <a href="https://store.epicgames.com/en-US/p/{{ .String "productSlug" }}" target="_blank" class="card">
+                          {{ $title := .String "title" }}
+                          {{ range .Array "keyImages" }}
+                            {{ if eq (.String "type") "OfferImageWide" }}
+                              <img src="{{ .String "url" }}" alt="{{ $title }}" style="width: 100%; max-width: 300px; height: 150px; object-fit: cover; border-radius: var(--border-radius);">
+                            {{ end }}
+                          {{ end }}
+                          <div class="card-content">
+                            <span class="size-base color-primary">{{ $title }}</span><br>
+                            <span class="size-h5 color-subdue">
+                              {{ if $hasPromo }}
+                                {{ $promotions := .Array "promotions.promotionalOffers" }}
+                                {{ if gt (len $promotions) 0 }}
+                                  {{ $firstPromo := index $promotions 0 }}
+                                  {{ $offers := $firstPromo.Array "promotionalOffers" }}
+                                  {{ if gt (len $offers) 0 }}
+                                    {{ $firstOffer := index $offers 0 }}
+                                    Free until {{ slice ($firstOffer.String "endDate") 0 10 }}
+                                  {{ else }}
+                                    Free this week!
+                                  {{ end }}
+                                {{ else }}
+                                  Free this week!
+                                {{ end }}
+                              {{ end }}
+                            </span>
+                          </div>
+                        </a>
+                      {{ end }}
+                    {{ end }}
+                  </div>
+                {{ else }}
+                  <p class="color-negative">Error fetching Epic Games data.</p>
+                {{ end }}
+              </div>
